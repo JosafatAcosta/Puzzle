@@ -359,3 +359,6 @@ button:disabled {
     h1 { font-size: 1.3em; }
     .container { padding: 0; }
 }
+.hidden {
+    display: none !important;
+}
