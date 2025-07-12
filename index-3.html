@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamificación: Patologías asociadas a estrés y ansiedad</title>
+    
+    <!-- Meta tags PWA -->
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Puzzle Clínico">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" href="icon-192.png" type="image/png" sizes="32x32">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2.2em;
+        }
+        .stage {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .puzzle-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            min-height: 120px;
+        }
+        .puzzle-piece {
+            width: 220px;
+            min-height: 90px;
+            border: 3px solid #3498db;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: linear-gradient(135deg, #eaf2f8, #d5e8f5);
+            transition: all 0.3s ease;
+            padding: 15px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            user-select: none;
+        }
+        .puzzle-piece.selected {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 4px #fadbd8;
+            background: linear-gradient(135deg, #fadbd8, #f5b7b1);
+        }
+        .drop-zone {
+            width: 240px;
+            min-height: 140px;
+            border: 3px dashed #3498db;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(249, 249, 249, 0.8);
+            transition: all 0.3s ease;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            position: relative;
+        }
+        .drop-zone.selected-target {
+            border-color: #e74c3c;
+            background: rgba(250, 219, 216, 0.9);
+            box-shadow: 0 0 0 4px #fadbd8;
+        }
+        .player-info {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            gap: 20px;
+        }
+        .player {
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 200px;
+        }
+        #player1 {
+            background: linear-gradient(135deg, #d5f5e3, #a8e6cf);
+            border: 2px solid #27ae60;
+        }
+        #player2 {
+            background: linear-gradient(135deg, #f5eef8, #e8d5f0);
+            border: 2px solid #8e44ad;
+        }
+        .player.active {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        button:hover {
+            background: linear-gradient(135deg, #2980b9, #1f639a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .hidden {
+            display: none;
+        }
+        .feedback {
+            font-style: italic;
+            color: #27ae60;
+            margin: 20px 0;
+            font-size: 18px;
+            min-height: 30px;
+            font-weight: 600;
+        }
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: rgba(231, 76, 60, 0.8);
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .score {
+            font-size: 20px;
+            margin: 15px 0;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .category-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 16px;
+            text-align: center;
+            padding: 8px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+        }
+        .incorrect {
+            animation: shake 0.6s ease-in-out;
+            border-color: #e74c3c !important;
+            background: linear-gradient(135deg, #fadbd8, #f5b7b1) !important;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+        .correct-feedback {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .incorrect-feedback {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        #installBtn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+        }
+        #installBtn:hover {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+        .stage-progress {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .stage-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background: #bdc3c7;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .stage-indicator.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            transform: scale(1.2);
+        }
+        .stage-indicator.completed {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+        .complexity-level {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #e74c3c;
+        }
+        .hint-system {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        /* MODO MÓVIL */
+        @media (max-width: 768px) {
+            .puzzle-piece {
+                width: 98vw;
+                min-height: 60px;
+                font-size: 13px;
+                margin: 0 auto;
+            }
+            .drop-zone {
+                width: 98vw;
+                min-height: 80px;
+                margin: 0 auto 10px auto;
+            }
+            .player-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            h1 {
+                font-size: 1.3em;
+            }
+            .container {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gamificación: Patologías asociadas a estrés y ansiedad</h1>
+        
+        <div class="stage-progress">
+            <div class="stage-indicator active" id="indicator-1">1</div>
+            <div class="stage-indicator" id="indicator-2">2</div>
+            <div class="stage-indicator" id="indicator-3">3</div>
+            <div class="stage-indicator" id="indicator-4">4</div>
+        </div>
+        
+        <div class="timer">⏱️ Tiempo: <span id="time">08:00</span></div>
+        <div class="score">🏆 Puntaje: <span id="score">0</span></div>
+        
+        <div class="complexity-level">
+            <strong>Instrucciones precisas para jugar:</strong>
+            <ul style="text-align:left; max-width:600px; margin:0 auto; font-size:15px;">
+                <li>Toca una carta para seleccionarla (se resaltará).</li>
+                <li>Luego toca la casilla de destino (zona de categoría) para asociar la carta seleccionada.</li>
+                <li>Puedes jugar completamente en dispositivos móviles, sin arrastrar.</li>
+                <li>Recibe retroalimentación inmediata y suma puntos por aciertos.</li>
+                <li>Usa pistas si lo requieres, pero perderás puntos.</li>
+            </ul>
+        </div>
+        
+        <div id="stage1" class="stage">
+            <h2>Etapa 1: Síntomas Diferenciadores Básicos</h2>
+            <p>Clasifica cada síntoma según corresponda a Estrés Agudo, Trastornos de Ansiedad o Ambos (DSM-5-TR).</p>
+            
+            <div class="player-info">
+                <div id="player1" class="player active">👤 Jugador 1</div>
+                <div id="player2" class="player">👤 Jugador 2</div>
+            </div>
+            
+            <div class="puzzle-area" id="pieces-container1">
+                <!-- Cards will be generated and shuffled by JavaScript -->
+            </div>
+            
+            <div class="puzzle-area">
+                <div id="drop1" class="drop-zone" data-category="stress">
+                    <div class="category-title">💥 Estrés Agudo</div>
+                </div>
+                <div id="drop2" class="drop-zone" data-category="anxiety">
+                    <div class="category-title">😰 Trastornos de Ansiedad</div>
+                </div>
+                <div id="drop3" class="drop-zone" data-category="both">
+                    <div class="category-title">🔄 Ambos</div>
+                </div>
+            </div>
+            
+            <div id="feedback1" class="feedback"></div>
+            <div class="hint-system">
+                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining1">3</span> | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining1">0</span>
+            </div>
+        </div>
+        
+        <div id="stage2" class="stage hidden">
+            <h2>Etapa 2: Criterios Diagnósticos Específicos</h2>
+            <p>Relaciona cada criterio con el trastorno correspondiente según el DSM-5-TR actualizado.</p>
+            
+            <div class="player-info">
+                <div id="player1-s2" class="player">👤 Jugador 1</div>
+                <div id="player2-s2" class="player">👤 Jugador 2</div>
+            </div>
+            
+            <div class="puzzle-area" id="pieces-container2">
+                <!-- Cards will be generated and shuffled by JavaScript -->
+            </div>
+            
+            <div class="puzzle-area">
+                <div id="drop4" class="drop-zone" data-category="ptsd">
+                    <div class="category-title">🌪️ TEPT</div>
+                </div>
+                <div id="drop5" class="drop-zone" data-category="gad">
+                    <div class="category-title">😟 TAG</div>
+                </div>
+                <div id="drop6" class="drop-zone" data-category="panic">
+                    <div class="category-title">💨 Trastorno de Pánico</div>
+                </div>
+                <div id="drop7" class="drop-zone" data-category="social">
+                    <div class="category-title">👥 Ansiedad Social</div>
+                </div>
+                <div id="drop8" class="drop-zone" data-category="adjustment">
+                    <div class="category-title">🔄 Trastorno Adaptativo</div>
+                </div>
+                <div id="drop9" class="drop-zone" data-category="agoraphobia">
+                    <div class="category-title">🚪 Agorafobia</div>
+                </div>
+                <div id="drop10" class="drop-zone" data-category="separation">
+                    <div class="category-title">👶 Ansiedad de Separación</div>
+                </div>
+                <div id="drop11" class="drop-zone" data-category="specific">
+                    <div class="category-title">🕷️ Fobia Específica</div>
+                </div>
+            </div>
+            
+            <div id="feedback2" class="feedback"></div>
+            <div class="hint-system">
+                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining2">3</span> | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining2">0</span>
+            </div>
+        </div>
+        
+        <div id="stage3" class="stage hidden">
+            <h2>Etapa 3: Casos Clínicos Complejos</h2>
+            <p>Analiza casos complejos con comorbilidades y selecciona el diagnóstico principal más apropiado.</p>
+            
+            <div class="player-info">
+                <div id="player1-s3" class="player">👤 Jugador 1</div>
+                <div id="player2-s3" class="player">👤 Jugador 2</div>
+            </div>
+            
+            <div class="puzzle-area" id="pieces-container3">
+                <!-- Cards will be generated and shuffled by JavaScript -->
+            </div>
+            
+            <div class="puzzle-area">
+                <div id="drop12" class="drop-zone" data-category="ptsd-complex">
+                    <div class="category-title">🌪️ TEPT Complejo</div>
+                </div>
+                <div id="drop13" class="drop-zone" data-category="gad-severe">
+                    <div class="category-title">😰 TAG Severo</div>
+                </div>
+                <div id="drop14" class="drop-zone" data-category="panic-agoraphobia">
+                    <div class="category-title">💨🚪 Pánico + Agorafobia</div>
+                </div>
+                <div id="drop15" class="drop-zone" data-category="social-severe">
+                    <div class="category-title">👥😱 Ansiedad Social Severa</div>
+                </div>
+                <div id="drop16" class="drop-zone" data-category="mixed-anxiety">
+                    <div class="category-title">🔀 Trastorno Mixto</div>
+                </div>
+                <div id="drop17" class="drop-zone" data-category="adjustment-ptsd">
+                    <div class="category-title">🔄🌪️ Adaptativo vs TEPT</div>
+                </div>
+            </div>
+            
+            <div id="feedback3" class="feedback"></div>
+            <div class="hint-system">
+                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining3">3</span> | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining3">0</span>
+            </div>
+        </div>
+        
+        <div id="stage4" class="stage hidden">
+            <h2>Etapa 4: Estrategias de Intervención Avanzadas</h2>
+            <p>Selecciona la estrategia de intervención más adecuada considerando severidad, comorbilidades y contexto.</p>
+            
+            <div class="player-info">
+                <div id="player1-s4" class="player">👤 Jugador 1</div>
+                <div id="player2-s4" class="player">👤 Jugador 2</div>
+            </div>
+            
+            <div class="puzzle-area" id="pieces-container4">
+                <!-- Cards will be generated and shuffled by JavaScript -->
+            </div>
+            
+            <div class="puzzle-area">
+                <div id="drop18" class="drop-zone" data-category="crisis">
+                    <div class="category-title">🚨 Intervención en Crisis</div>
+                </div>
+                <div id="drop19" class="drop-zone" data-category="psychotherapy">
+                    <div class="category-title">🗣️ Psicoterapia Especializada</div>
+                </div>
+                <div id="drop20" class="drop-zone" data-category="medication">
+                    <div class="category-title">💊 Farmacoterapia</div>
+                </div>
+                <div id="drop21" class="drop-zone" data-category="combined">
+                    <div class="category-title">🔗 Tratamiento Combinado</div>
+                </div>
+                <div id="drop22" class="drop-zone" data-category="prevention">
+                    <div class="category-title">🛡️ Prevención Terciaria</div>
+                </div>
+                <div id="drop23" class="drop-zone" data-category="referral">
+                    <div class="category-title">🏥 Derivación Urgente</div>
+                </div>
+            </div>
+            
+            <div id="feedback4" class="feedback"></div>
+            <div class="hint-system">
+                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining4">3</span> | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining4">0</span>
+            </div>
+        </div>
+        
+        <button id="nextBtn" class="hidden" disabled>Siguiente Etapa 🚀</button>
+        <button id="hintBtn">💡 Pista</button>
+        <button id="restartBtn">🔄 Reiniciar Juego</button>
+        <button id="shuffleBtn">🎲 Mezclar Cartas</button>
+        <button id="installBtn">📱 Instalar App</button>
+        
+        <div id="summary" class="stage hidden">
+            <h2>🏆 ¡Resumen Diagnóstico Completo!</h2>
+            <div id="final-score" class="score" style="font-size: 28px;"></div>
+            
+            <h3>📚 Diferencias Clave Actualizadas (DSM-5-TR):</h3>
+            <div class="puzzle-area" style="justify-content: center;">
+                <div style="text-align: left; max-width: 900px; background: rgba(255,255,255,0.9); padding: 25px; border-radius: 15px;">
+                    <p><strong>🔹 Trastorno de Ansiedad Generalizada (TAG):</strong> Preocupación excesiva ≥6 meses + ≥3 síntomas (inquietud, fatiga, dificultad concentración, irritabilidad, [...]
+                    
+                    <p><strong>🔹 Trastorno de Pánico:</strong> Ataques de pánico inesperados recurrentes + preocupación persistente ≥1 mes o cambio comportamental significativo. DSM-5-TR inclu[...]
+                    
+                    <p><strong>🔹 TEPT:</strong> Exposición a trauma + síntomas de reviviscencia, evitación, alteraciones cognitivas/anímicas negativas y arousal/reactividad ≥1 mes. DSM-5-TR a[...]
+                    
+                    <p><strong>🔹 Trastorno Adaptativo:</strong> Síntomas emocionales/comportamentales en respuesta a estresor identificable dentro de 3 meses, sin cumplir criterios para otro trast[...]
+                    
+                    <p><strong>🔹 Ansiedad Social:</strong> Miedo marcado ≥6 meses a situaciones sociales por evaluación negativa. DSM-5-TR especifica presentación en línea/digital.</p>
+                    
+                    <p><strong>🔹 Agorafobia:</strong> Miedo ≥6 meses a ≥2 situaciones (transporte, espacios abiertos/cerrados, multitudes, estar solo fuera). Puede ocurrir sin trastorno de pán[...]
+                    
+                    <p><strong>🔹 Estrés Agudo vs Patológico:</strong> Estrés patológico cuando supera capacidad adaptativa, persiste ≥6 meses, causa deterioro funcional significativo o comorb[...]
+                </div>
+            </div>
+            
+            <h3>💊 Opciones Terapéuticas Basadas en Evidencia:</h3>
+            <ul style="text-align: left; max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.9); padding: 25px; border-radius: 15px;">
+                <li><strong>🗣️ Cognitivo-Conductual (TCC):</strong> Primera línea para TAG, pánico, fobias sociales y TEPT. EMDR para TEPT.</li>
+                <li><strong>💊 ISRS/SNRI:</strong> Primera línea farmacológica. Sertralina, paroxetina para TEPT. Escitalopram para TAG.</li>
+                <li><strong>🚨 Intervención en Crisis:</strong> Para estrés agudo con desorganización grave o riesgo inmediato.</li>
+                <li><strong>🛡️ Prevención:</strong> Psicoeducación temprana, manejo de estrés, resiliencia.</li>
+                <li><strong>🔗 Tratamiento Combinado:</strong> TCC + farmacoterapia para casos severos o crónicos.</li>
+                <li><strong>🏥 Derivación Especializada:</strong> Casos refractarios, comorbilidades complejas, riesgo suicida.</li>
+            </ul>
+            
+            <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px;">
+                <h4>🎯 Tu Rendimiento:</h4>
+                <div id="performance-breakdown"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="puzzle-game.js"></script>
+    <script>
+    // Adaptación a móviles: asociación por selección (no drag and drop)
+    document.addEventListener('DOMContentLoaded', function() {
+        let selectedPiece = null;
+        let selectedZone = null;
+
+        // Delegación para selección de carta
+        document.body.addEventListener('click', function(e) {
+            // Selección de carta
+            if (e.target.classList.contains('puzzle-piece') && e.target.getAttribute('draggable') !== 'false') {
+                document.querySelectorAll('.puzzle-piece.selected').forEach(el => el.classList.remove('selected'));
+                selectedPiece = e.target;
+                selectedPiece.classList.add('selected');
+                selectedZone = null;
+                document.querySelectorAll('.drop-zone.selected-target').forEach(el => el.classList.remove('selected-target'));
+            }
+            // Selección de zona destino
+            else if (e.target.closest('.drop-zone') && selectedPiece) {
+                const zone = e.target.closest('.drop-zone');
+                document.querySelectorAll('.drop-zone.selected-target').forEach(el => el.classList.remove('selected-target'));
+                zone.classList.add('selected-target');
+                selectedZone = zone;
+
+                // Simula drop si hay pieza seleccionada
+                const stageMatch = zone.closest('.stage');
+                let stageNum = 1;
+                if (stageMatch) {
+                    const id = stageMatch.id;
+                    if (/stage(\d)/.test(id)) stageNum = parseInt(id.replace('stage',''));
+                }
+                // Simula drop
+                if (typeof window.dropPuzzlePiece === 'function') {
+                    // Si ya existe función global de drop, úsala (para integración con puzzle-game.js modificado)
+                    window.dropPuzzlePiece(selectedPiece, selectedZone, stageNum);
+                } else {
+                    // Fallback: mueve el elemento y marca como colocado
+                    selectedZone.appendChild(selectedPiece);
+                    selectedPiece.classList.remove('selected');
+                    selectedPiece.setAttribute('draggable','false');
+                }
+                selectedPiece = null;
+                setTimeout(()=>zone.classList.remove('selected-target'),500);
+            }
+        });
+    });
+    </script>
+</body>
+</html>
