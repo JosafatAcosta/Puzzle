@@ -2,561 +2,213 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <title>Puzzle Clínico - Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamificación: Patologías asociadas a estrés y ansiedad</title>
-    
-    <!-- Meta tags PWA -->
-    <meta name="theme-color" content="#2c3e50">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Puzzle Clínico">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="icon" href="icon-192.png" type="image/png" sizes="32x32">
-    
+    <!-- Puedes agregar style.css para detalles globales -->
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
+        :root {
+            --negro-piano: #181920;
+            --blanco: #f9f9f9;
+            --c1: #ff7e5f;
+            --c2: #feb47b;
+            --c3: #43cea2;
+            --c4: #185a9d;
+            --c5: #a8ff78;
+            --c6: #fa709a;
+            --c7: #f6d365;
+            --c8: #1e3c72;
+            --c9: #f7971e;
+            --c10: #56ccf2;
         }
-        .container {
-            max-width: 1200px;
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--negro-piano);
+            overflow-x: hidden;
+        }
+
+        .cubist-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        /* Cubist geometric shapes, absolute-positioned, vibrant, rotate slightly */
+        .shape {
+            position: absolute;
+            opacity: 0.82;
+            border-radius: 8px;
+            filter: blur(0.5px);
+            transition: transform 1.2s cubic-bezier(.6,-0.28,.74,.05);
+            mix-blend-mode: lighten;
+        }
+        .s1 { background: linear-gradient(120deg, var(--c1), var(--c2)); width: 220px; height: 110px; top: 6vh; left: 4vw; transform: rotate(-8deg);}
+        .s2 { background: linear-gradient(120deg, var(--c3), var(--c4)); width: 150px; height: 180px; top: 55vh; left: 7vw; transform: rotate(13deg);}
+        .s3 { background: linear-gradient(120deg, var(--c5), var(--c6)); width: 210px; height: 90px; top: 18vh; right: 7vw; transform: rotate(22deg);}
+        .s4 { background: linear-gradient(120deg, var(--c7), var(--c8)); width: 80px; height: 220px; bottom: 12vh; left: 23vw; transform: rotate(-14deg);}
+        .s5 { background: linear-gradient(120deg, var(--c9), var(--c10)); width: 120px; height: 120px; bottom: 10vh; right: 8vw; transform: rotate(17deg);}
+        .s6 { background: linear-gradient(140deg, var(--c6), var(--c7), var(--c2)); width: 100px; height: 44px; top: 55vh; right: 32vw; transform: rotate(-7deg);}
+        .s7 { background: linear-gradient(120deg, var(--c4), var(--c1)); width: 64px; height: 64px; top: 7vh; right: 20vw; transform: rotate(35deg);}
+        .s8 { background: linear-gradient(120deg, var(--c3), var(--c10)); width: 66px; height: 190px; bottom: 23vh; left: 6vw; transform: rotate(-25deg);}
+        .s9 { background: linear-gradient(120deg, var(--c5), var(--c2)); width: 140px; height: 50px; bottom: 6vh; left: 70vw; transform: rotate(5deg);}
+        .s10 { background: linear-gradient(120deg, var(--c8), var(--c9)); width: 60px; height: 60px; top: 43vh; left: 53vw; transform: rotate(-22deg);}
+        /* Responsive: reduce shapes on mobile */
+        @media (max-width: 700px) {
+            .s1, .s2, .s3, .s4, .s5, .s6, .s7, .s8, .s9, .s10 {
+                opacity: 0.55;
+                filter: blur(1.3px);
+            }
+            .s1 { width: 120px; height: 62px;}
+            .s2 { width: 84px; height: 110px;}
+            .s3 { width: 108px; height: 40px;}
+            .s4 { width: 34px; height: 100px;}
+            .s5 { width: 70px; height: 70px;}
+            .s6 { width: 48px; height: 24px;}
+            .s7 { width: 32px; height: 32px;}
+            .s8 { width: 26px; height: 88px;}
+            .s9 { width: 58px; height: 25px;}
+            .s10 { width: 25px; height: 25px;}
+        }
+
+        .dashboard-container {
+            max-width: 900px;
             margin: 0 auto;
+            padding: 48px 18px 34px 18px;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
         h1 {
-            color: #fff;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            font-size: 2.2em;
+            color: var(--blanco);
+            font-size: 2.7em;
+            text-shadow: 2px 4px 20px #000c, 1px 2px 8px #222b;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
         }
-        .stage {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+        .subtitle {
+            color: #fafafa;
+            font-size: 1.08em;
+            margin-bottom: 40px;
+            opacity: .93;
         }
-        .puzzle-area {
+        .game-list {
             display: flex;
             flex-wrap: wrap;
+            gap: 38px;
             justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-            min-height: 120px;
-        }
-        .puzzle-piece {
-            width: 220px;
-            min-height: 90px;
-            border: 3px solid #3498db;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            background: linear-gradient(135deg, #eaf2f8, #d5e8f5);
-            transition: all 0.3s ease;
-            padding: 15px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 500;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 26px;
+            z-index: 1;
             position: relative;
-            user-select: none;
         }
-        .puzzle-piece.selected {
-            border-color: #e74c3c;
-            box-shadow: 0 0 0 4px #fadbd8;
-            background: linear-gradient(135deg, #fadbd8, #f5b7b1);
-        }
-        .drop-zone {
-            width: 240px;
-            min-height: 140px;
-            border: 3px dashed #3498db;
-            border-radius: 15px;
+        .game-card {
+            background: rgba(28,29,35,0.96);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.41);
+            padding: 36px 24px 24px 24px;
+            width: 310px;
+            min-height: 196px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            background: rgba(249, 249, 249, 0.8);
-            transition: all 0.3s ease;
-            padding: 15px;
-            backdrop-filter: blur(5px);
-            cursor: pointer;
+            border: 3.2px solid transparent;
+            transition: 
+                box-shadow 0.25s, 
+                border 0.32s,
+                transform 0.17s cubic-bezier(.63,-0.28,.74,.25);
             position: relative;
+            overflow: hidden;
         }
-        .drop-zone.selected-target {
-            border-color: #e74c3c;
-            background: rgba(250, 219, 216, 0.9);
-            box-shadow: 0 0 0 4px #fadbd8;
+        .game-card:hover {
+            border: 3.2px solid var(--c2);
+            transform: translateY(-6px) scale(1.03) rotate(-2.5deg);
+            box-shadow: 0 16px 48px 0 rgba(255, 126, 95, 0.17), 0 2px 24px #000e;
         }
-        .player-info {
-            display: flex;
-            justify-content: space-around;
-            margin: 25px 0;
-            gap: 20px;
+        .game-icon {
+            font-size: 59px;
+            margin-bottom: 18px;
+            margin-top: -18px;
+            filter: drop-shadow(0 2px 6px #fff4);
         }
-        .player {
-            padding: 15px 25px;
-            border-radius: 12px;
+        .game-title {
             font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            flex: 1;
-            max-width: 200px;
+            font-size: 1.28em;
+            margin-bottom: 10px;
+            color: var(--c1);
+            letter-spacing: 0.01em;
         }
-        #player1 {
-            background: linear-gradient(135deg, #d5f5e3, #a8e6cf);
-            border: 2px solid #27ae60;
+        .game-desc {
+            color: #e4e4e4;
+            font-size: 1.01em;
+            margin-bottom: 22px;
         }
-        #player2 {
-            background: linear-gradient(135deg, #f5eef8, #e8d5f0);
-            border: 2px solid #8e44ad;
-        }
-        .player.active {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-        button {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
+        .game-link {
+            background: linear-gradient(120deg, var(--c1), var(--c3));
+            color: var(--negro-piano);
             border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
+            padding: 12px 28px;
+            border-radius: 9px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            margin: 15px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 1.05em;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: auto;
+            letter-spacing: .01em;
+            box-shadow: 0 2px 8px #2c3e5070;
+            transition: background 0.19s, color 0.19s;
         }
-        button:hover {
-            background: linear-gradient(135deg, #2980b9, #1f639a);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        button:disabled {
-            background: #95a5a6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .hidden {
-            display: none;
-        }
-        .feedback {
-            font-style: italic;
-            color: #27ae60;
-            margin: 20px 0;
-            font-size: 18px;
-            min-height: 30px;
-            font-weight: 600;
-        }
-        .timer {
-            font-size: 24px;
-            font-weight: bold;
+        .game-link:hover {
+            background: linear-gradient(120deg, var(--c2), var(--c4));
             color: #fff;
-            margin: 15px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            background: rgba(231, 76, 60, 0.8);
-            padding: 10px 20px;
-            border-radius: 8px;
-            display: inline-block;
         }
-        .score {
-            font-size: 20px;
-            margin: 15px 0;
-            color: #fff;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-        .category-title {
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            font-size: 16px;
-            text-align: center;
-            padding: 8px;
-            background: rgba(52, 152, 219, 0.1);
-            border-radius: 8px;
-        }
-        .incorrect {
-            animation: shake 0.6s ease-in-out;
-            border-color: #e74c3c !important;
-            background: linear-gradient(135deg, #fadbd8, #f5b7b1) !important;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
-            20%, 40%, 60%, 80% { transform: translateX(8px); }
-        }
-        .correct-feedback {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        .incorrect-feedback {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        #installBtn {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-        }
-        #installBtn:hover {
-            background: linear-gradient(135deg, #27ae60, #229954);
-        }
-        .stage-progress {
-            background: rgba(255,255,255,0.9);
-            border-radius: 10px;
-            padding: 10px;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .stage-indicator {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            background: #bdc3c7;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        .stage-indicator.active {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            transform: scale(1.2);
-        }
-        .stage-indicator.completed {
-            background: linear-gradient(135deg, #27ae60, #229954);
-        }
-        .complexity-level {
-            background: rgba(255,255,255,0.9);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
-            border-left: 5px solid #e74c3c;
-        }
-        .hint-system {
-            background: rgba(255,255,255,0.9);
-            border-radius: 10px;
-            padding: 10px;
-            margin: 15px 0;
-            font-size: 14px;
-            color: #7f8c8d;
-        }
-        /* MODO MÓVIL */
-        @media (max-width: 768px) {
-            .puzzle-piece {
-                width: 98vw;
-                min-height: 60px;
-                font-size: 13px;
-                margin: 0 auto;
-            }
-            .drop-zone {
-                width: 98vw;
-                min-height: 80px;
-                margin: 0 auto 10px auto;
-            }
-            .player-info {
-                flex-direction: column;
-                gap: 10px;
-            }
-            h1 {
-                font-size: 1.3em;
-            }
-            .container {
-                padding: 0;
-            }
+        @media (max-width: 600px) {
+            .game-list { flex-direction: column; gap: 24px; }
+            .game-card { width: 98vw; min-width: unset;}
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Gamificación: Patologías asociadas a estrés y ansiedad</h1>
-        
-        <div class="stage-progress">
-            <div class="stage-indicator active" id="indicator-1">1</div>
-            <div class="stage-indicator" id="indicator-2">2</div>
-            <div class="stage-indicator" id="indicator-3">3</div>
-            <div class="stage-indicator" id="indicator-4">4</div>
+    <!-- Fondos geométricos cubistas, shapes -->
+    <div class="cubist-bg">
+        <div class="shape s1"></div>
+        <div class="shape s2"></div>
+        <div class="shape s3"></div>
+        <div class="shape s4"></div>
+        <div class="shape s5"></div>
+        <div class="shape s6"></div>
+        <div class="shape s7"></div>
+        <div class="shape s8"></div>
+        <div class="shape s9"></div>
+        <div class="shape s10"></div>
+    </div>
+    <div class="dashboard-container">
+        <h1>🧠 Puzzle Clínico</h1>
+        <div class="subtitle">Elige una modalidad de juego. <br>
+            <span style="font-size:.97em;opacity:.75;">Inspirado en el cubismo moderno</span>
         </div>
-        
-        <div class="timer">⏱️ Tiempo: <span id="time">08:00</span></div>
-        <div class="score">🏆 Puntaje: <span id="score">0</span></div>
-        
-        <div class="complexity-level">
-            <strong>Instrucciones precisas para jugar:</strong>
-            <ul style="text-align:left; max-width:600px; margin:0 auto; font-size:15px;">
-                <li>Toca una carta para seleccionarla (se resaltará).</li>
-                <li>Luego toca la casilla de destino (zona de categoría) para asociar la carta seleccionada.</li>
-                <li>Puedes jugar completamente en dispositivos móviles, sin arrastrar.</li>
-                <li>Recibe retroalimentación inmediata y suma puntos por aciertos.</li>
-                <li>Usa pistas si lo requieres, pero perderás puntos.</li>
-            </ul>
-        </div>
-        
-        <div id="stage1" class="stage">
-            <h2>Etapa 1: Síntomas Diferenciadores Básicos</h2>
-            <p>Clasifica cada síntoma según corresponda a Estrés Agudo, Trastornos de Ansiedad o Ambos (DSM-5-TR).</p>
-            
-            <div class="player-info">
-                <div id="player1" class="player active">👤 Jugador 1</div>
-                <div id="player2" class="player">👤 Jugador 2</div>
+        <div class="game-list">
+            <!-- Puzzle Game Card -->
+            <div class="game-card">
+                <div class="game-icon">🧩</div>
+                <div class="game-title">Estrés y Ansiedad DSM-5-TR</div>
+                <div class="game-desc">
+                    Clasifica síntomas, criterios y casos clínicos en un puzzle clínico.<br>
+                    Ideal para estudiantes de salud mental.
+                </div>
+                <a href="games/puzzle.html" class="game-link">Jugar</a>
             </div>
-            
-            <div class="puzzle-area" id="pieces-container1">
-                <!-- Cards will be generated and shuffled by JavaScript -->
+            <!-- Puedes agregar más juegos aquí -->
+            <!-- Ejemplo:
+            <div class="game-card">
+                <div class="game-icon">🕹️</div>
+                <div class="game-title">Otro Juego</div>
+                <div class="game-desc">Descripción del nuevo juego aquí.</div>
+                <a href="games/nuevo-juego.html" class="game-link">Jugar</a>
             </div>
-            
-            <div class="puzzle-area">
-                <div id="drop1" class="drop-zone" data-category="stress">
-                    <div class="category-title">💥 Estrés Agudo</div>
-                </div>
-                <div id="drop2" class="drop-zone" data-category="anxiety">
-                    <div class="category-title">😰 Trastornos de Ansiedad</div>
-                </div>
-                <div id="drop3" class="drop-zone" data-category="both">
-                    <div class="category-title">🔄 Ambos</div>
-                </div>
-            </div>
-            
-            <div id="feedback1" class="feedback"></div>
-            <div class="hint-system">
-                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining1">3</span> | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining1">0</span>
-            </div>
-        </div>
-        
-        <div id="stage2" class="stage hidden">
-            <h2>Etapa 2: Criterios Diagnósticos Específicos</h2>
-            <p>Relaciona cada criterio con el trastorno correspondiente según el DSM-5-TR actualizado.</p>
-            
-            <div class="player-info">
-                <div id="player1-s2" class="player">👤 Jugador 1</div>
-                <div id="player2-s2" class="player">👤 Jugador 2</div>
-            </div>
-            
-            <div class="puzzle-area" id="pieces-container2">
-                <!-- Cards will be generated and shuffled by JavaScript -->
-            </div>
-            
-            <div class="puzzle-area">
-                <div id="drop4" class="drop-zone" data-category="ptsd">
-                    <div class="category-title">🌪️ TEPT</div>
-                </div>
-                <div id="drop5" class="drop-zone" data-category="gad">
-                    <div class="category-title">😟 TAG</div>
-                </div>
-                <div id="drop6" class="drop-zone" data-category="panic">
-                    <div class="category-title">💨 Trastorno de Pánico</div>
-                </div>
-                <div id="drop7" class="drop-zone" data-category="social">
-                    <div class="category-title">👥 Ansiedad Social</div>
-                </div>
-                <div id="drop8" class="drop-zone" data-category="adjustment">
-                    <div class="category-title">🔄 Trastorno Adaptativo</div>
-                </div>
-                <div id="drop9" class="drop-zone" data-category="agoraphobia">
-                    <div class="category-title">🚪 Agorafobia</div>
-                </div>
-                <div id="drop10" class="drop-zone" data-category="separation">
-                    <div class="category-title">👶 Ansiedad de Separación</div>
-                </div>
-                <div id="drop11" class="drop-zone" data-category="specific">
-                    <div class="category-title">🕷️ Fobia Específica</div>
-                </div>
-            </div>
-            
-            <div id="feedback2" class="feedback"></div>
-            <div class="hint-system">
-                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining2">3</span> | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining2">0</span>
-            </div>
-        </div>
-        
-        <div id="stage3" class="stage hidden">
-            <h2>Etapa 3: Casos Clínicos Complejos</h2>
-            <p>Analiza casos complejos con comorbilidades y selecciona el diagnóstico principal más apropiado.</p>
-            
-            <div class="player-info">
-                <div id="player1-s3" class="player">👤 Jugador 1</div>
-                <div id="player2-s3" class="player">👤 Jugador 2</div>
-            </div>
-            
-            <div class="puzzle-area" id="pieces-container3">
-                <!-- Cards will be generated and shuffled by JavaScript -->
-            </div>
-            
-            <div class="puzzle-area">
-                <div id="drop12" class="drop-zone" data-category="ptsd-complex">
-                    <div class="category-title">🌪️ TEPT Complejo</div>
-                </div>
-                <div id="drop13" class="drop-zone" data-category="gad-severe">
-                    <div class="category-title">😰 TAG Severo</div>
-                </div>
-                <div id="drop14" class="drop-zone" data-category="panic-agoraphobia">
-                    <div class="category-title">💨🚪 Pánico + Agorafobia</div>
-                </div>
-                <div id="drop15" class="drop-zone" data-category="social-severe">
-                    <div class="category-title">👥😱 Ansiedad Social Severa</div>
-                </div>
-                <div id="drop16" class="drop-zone" data-category="mixed-anxiety">
-                    <div class="category-title">🔀 Trastorno Mixto</div>
-                </div>
-                <div id="drop17" class="drop-zone" data-category="adjustment-ptsd">
-                    <div class="category-title">🔄🌪️ Adaptativo vs TEPT</div>
-                </div>
-            </div>
-            
-            <div id="feedback3" class="feedback"></div>
-            <div class="hint-system">
-                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining3">3</span> | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining3">0</span>
-            </div>
-        </div>
-        
-        <div id="stage4" class="stage hidden">
-            <h2>Etapa 4: Estrategias de Intervención Avanzadas</h2>
-            <p>Selecciona la estrategia de intervención más adecuada considerando severidad, comorbilidades y contexto.</p>
-            
-            <div class="player-info">
-                <div id="player1-s4" class="player">👤 Jugador 1</div>
-                <div id="player2-s4" class="player">👤 Jugador 2</div>
-            </div>
-            
-            <div class="puzzle-area" id="pieces-container4">
-                <!-- Cards will be generated and shuffled by JavaScript -->
-            </div>
-            
-            <div class="puzzle-area">
-                <div id="drop18" class="drop-zone" data-category="crisis">
-                    <div class="category-title">🚨 Intervención en Crisis</div>
-                </div>
-                <div id="drop19" class="drop-zone" data-category="psychotherapy">
-                    <div class="category-title">🗣️ Psicoterapia Especializada</div>
-                </div>
-                <div id="drop20" class="drop-zone" data-category="medication">
-                    <div class="category-title">💊 Farmacoterapia</div>
-                </div>
-                <div id="drop21" class="drop-zone" data-category="combined">
-                    <div class="category-title">🔗 Tratamiento Combinado</div>
-                </div>
-                <div id="drop22" class="drop-zone" data-category="prevention">
-                    <div class="category-title">🛡️ Prevención Terciaria</div>
-                </div>
-                <div id="drop23" class="drop-zone" data-category="referral">
-                    <div class="category-title">🏥 Derivación Urgente</div>
-                </div>
-            </div>
-            
-            <div id="feedback4" class="feedback"></div>
-            <div class="hint-system">
-                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining4">3</span> | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining4">0</span>
-            </div>
-        </div>
-        
-        <button id="nextBtn" class="hidden" disabled>Siguiente Etapa 🚀</button>
-        <button id="hintBtn">💡 Pista</button>
-        <button id="restartBtn">🔄 Reiniciar Juego</button>
-        <button id="shuffleBtn">🎲 Mezclar Cartas</button>
-        <button id="installBtn">📱 Instalar App</button>
-        
-        <div id="summary" class="stage hidden">
-            <h2>🏆 ¡Resumen Diagnóstico Completo!</h2>
-            <div id="final-score" class="score" style="font-size: 28px;"></div>
-            
-            <h3>📚 Diferencias Clave Actualizadas (DSM-5-TR):</h3>
-            <div class="puzzle-area" style="justify-content: center;">
-                <div style="text-align: left; max-width: 900px; background: rgba(255,255,255,0.9); padding: 25px; border-radius: 15px;">
-                    <p><strong>🔹 Trastorno de Ansiedad Generalizada (TAG):</strong> Preocupación excesiva ≥6 meses + ≥3 síntomas (inquietud, fatiga, dificultad concentración, irritabilidad, [...]
-                    
-                    <p><strong>🔹 Trastorno de Pánico:</strong> Ataques de pánico inesperados recurrentes + preocupación persistente ≥1 mes o cambio comportamental significativo. DSM-5-TR inclu[...]
-                    
-                    <p><strong>🔹 TEPT:</strong> Exposición a trauma + síntomas de reviviscencia, evitación, alteraciones cognitivas/anímicas negativas y arousal/reactividad ≥1 mes. DSM-5-TR a[...]
-                    
-                    <p><strong>🔹 Trastorno Adaptativo:</strong> Síntomas emocionales/comportamentales en respuesta a estresor identificable dentro de 3 meses, sin cumplir criterios para otro trast[...]
-                    
-                    <p><strong>🔹 Ansiedad Social:</strong> Miedo marcado ≥6 meses a situaciones sociales por evaluación negativa. DSM-5-TR especifica presentación en línea/digital.</p>
-                    
-                    <p><strong>🔹 Agorafobia:</strong> Miedo ≥6 meses a ≥2 situaciones (transporte, espacios abiertos/cerrados, multitudes, estar solo fuera). Puede ocurrir sin trastorno de pán[...]
-                    
-                    <p><strong>🔹 Estrés Agudo vs Patológico:</strong> Estrés patológico cuando supera capacidad adaptativa, persiste ≥6 meses, causa deterioro funcional significativo o comorb[...]
-                </div>
-            </div>
-            
-            <h3>💊 Opciones Terapéuticas Basadas en Evidencia:</h3>
-            <ul style="text-align: left; max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.9); padding: 25px; border-radius: 15px;">
-                <li><strong>🗣️ Cognitivo-Conductual (TCC):</strong> Primera línea para TAG, pánico, fobias sociales y TEPT. EMDR para TEPT.</li>
-                <li><strong>💊 ISRS/SNRI:</strong> Primera línea farmacológica. Sertralina, paroxetina para TEPT. Escitalopram para TAG.</li>
-                <li><strong>🚨 Intervención en Crisis:</strong> Para estrés agudo con desorganización grave o riesgo inmediato.</li>
-                <li><strong>🛡️ Prevención:</strong> Psicoeducación temprana, manejo de estrés, resiliencia.</li>
-                <li><strong>🔗 Tratamiento Combinado:</strong> TCC + farmacoterapia para casos severos o crónicos.</li>
-                <li><strong>🏥 Derivación Especializada:</strong> Casos refractarios, comorbilidades complejas, riesgo suicida.</li>
-            </ul>
-            
-            <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px;">
-                <h4>🎯 Tu Rendimiento:</h4>
-                <div id="performance-breakdown"></div>
-            </div>
+            -->
         </div>
     </div>
-
-    <script src="puzzle-game.js"></script>
-    <script>
-    // Adaptación a móviles: asociación por selección (no drag and drop)
-    document.addEventListener('DOMContentLoaded', function() {
-        let selectedPiece = null;
-        let selectedZone = null;
-
-        // Delegación para selección de carta
-        document.body.addEventListener('click', function(e) {
-            // Selección de carta
-            if (e.target.classList.contains('puzzle-piece') && e.target.getAttribute('draggable') !== 'false') {
-                document.querySelectorAll('.puzzle-piece.selected').forEach(el => el.classList.remove('selected'));
-                selectedPiece = e.target;
-                selectedPiece.classList.add('selected');
-                selectedZone = null;
-                document.querySelectorAll('.drop-zone.selected-target').forEach(el => el.classList.remove('selected-target'));
-            }
-            // Selección de zona destino
-            else if (e.target.closest('.drop-zone') && selectedPiece) {
-                const zone = e.target.closest('.drop-zone');
-                document.querySelectorAll('.drop-zone.selected-target').forEach(el => el.classList.remove('selected-target'));
-                zone.classList.add('selected-target');
-                selectedZone = zone;
-
-                // Simula drop si hay pieza seleccionada
-                const stageMatch = zone.closest('.stage');
-                let stageNum = 1;
-                if (stageMatch) {
-                    const id = stageMatch.id;
-                    if (/stage(\d)/.test(id)) stageNum = parseInt(id.replace('stage',''));
-                }
-                // Simula drop
-                if (typeof window.dropPuzzlePiece === 'function') {
-                    // Si ya existe función global de drop, úsala (para integración con puzzle-game.js modificado)
-                    window.dropPuzzlePiece(selectedPiece, selectedZone, stageNum);
-                } else {
-                    // Fallback: mueve el elemento y marca como colocado
-                    selectedZone.appendChild(selectedPiece);
-                    selectedPiece.classList.remove('selected');
-                    selectedPiece.setAttribute('draggable','false');
-                }
-                selectedPiece = null;
-                setTimeout(()=>zone.classList.remove('selected-target'),500);
-            }
-        });
-    });
-    </script>
 </body>
 </html>
