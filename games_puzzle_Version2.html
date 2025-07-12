@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Puzzle Clínico: Estrés y Ansiedad DSM-5-TR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Cubist & Negro Piano Style -->
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <!-- Cubist Geometric Background -->
+    <div class="cubist-bg">
+        <div class="shape s1"></div>
+        <div class="shape s2"></div>
+        <div class="shape s3"></div>
+        <div class="shape s4"></div>
+        <div class="shape s5"></div>
+        <div class="shape s6"></div>
+        <div class="shape s7"></div>
+        <div class="shape s8"></div>
+        <div class="shape s9"></div>
+        <div class="shape s10"></div>
+    </div>
+    <div class="container">
+        <h1>🧩 Gamificación: Patologías asociadas a Estrés y Ansiedad</h1>
+        
+        <div class="stage-progress">
+            <div class="stage-indicator active" id="indicator-1">1</div>
+            <div class="stage-indicator" id="indicator-2">2</div>
+            <div class="stage-indicator" id="indicator-3">3</div>
+            <div class="stage-indicator" id="indicator-4">4</div>
+        </div>
+        
+        <div class="timer">⏱️ Tiempo: <span id="time">08:00</span></div>
+        <div class="score">🏆 Puntaje: <span id="score">0</span></div>
+        
+        <div class="complexity-level">
+            <strong>Instrucciones para jugar:</strong>
+            <ul style="text-align:left; max-width:600px; margin:0 auto; font-size:15px;">
+                <li>Toca una carta para seleccionarla (se resaltará).</li>
+                <li>Luego toca la casilla de destino (zona de categoría) para asociar la carta seleccionada.</li>
+                <li>Puedes jugar completamente en dispositivos móviles, sin arrastrar.</li>
+                <li>Recibe retroalimentación inmediata y suma puntos por aciertos.</li>
+                <li>Usa pistas si lo requieres, pero perderás puntos.</li>
+            </ul>
+        </div>
+        
+        <!-- Etapa 1 -->
+        <div id="stage1" class="stage">
+            <h2>Etapa 1: Síntomas Diferenciadores Básicos</h2>
+            <p>Clasifica cada síntoma según corresponda a Estrés Agudo, Trastornos de Ansiedad o Ambos (DSM-5-TR).</p>
+            <div class="player-info">
+                <div id="player1" class="player active">👤 Jugador 1</div>
+                <div id="player2" class="player">👤 Jugador 2</div>
+            </div>
+            <div class="puzzle-area" id="pieces-container1"></div>
+            <div class="puzzle-area">
+                <div id="drop1" class="drop-zone" data-category="stress">
+                    <div class="category-title">💥 Estrés Agudo</div>
+                </div>
+                <div id="drop2" class="drop-zone" data-category="anxiety">
+                    <div class="category-title">😰 Trastornos de Ansiedad</div>
+                </div>
+                <div id="drop3" class="drop-zone" data-category="both">
+                    <div class="category-title">🔄 Ambos</div>
+                </div>
+            </div>
+            <div id="feedback1" class="feedback"></div>
+            <div class="hint-system">
+                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining1">3</span>
+                | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining1">0</span>
+            </div>
+        </div>
+        <!-- Etapa 2 -->
+        <div id="stage2" class="stage hidden">
+            <h2>Etapa 2: Criterios Diagnósticos Específicos</h2>
+            <p>Relaciona cada criterio con el trastorno correspondiente según el DSM-5-TR actualizado.</p>
+            <div class="player-info">
+                <div id="player1-s2" class="player">👤 Jugador 1</div>
+                <div id="player2-s2" class="player">👤 Jugador 2</div>
+            </div>
+            <div class="puzzle-area" id="pieces-container2"></div>
+            <div class="puzzle-area">
+                <div id="drop4" class="drop-zone" data-category="ptsd">
+                    <div class="category-title">🌪️ TEPT</div>
+                </div>
+                <div id="drop5" class="drop-zone" data-category="gad">
+                    <div class="category-title">😟 TAG</div>
+                </div>
+                <div id="drop6" class="drop-zone" data-category="panic">
+                    <div class="category-title">💨 Trastorno de Pánico</div>
+                </div>
+                <div id="drop7" class="drop-zone" data-category="social">
+                    <div class="category-title">👥 Ansiedad Social</div>
+                </div>
+                <div id="drop8" class="drop-zone" data-category="adjustment">
+                    <div class="category-title">🔄 Trastorno Adaptativo</div>
+                </div>
+                <div id="drop9" class="drop-zone" data-category="agoraphobia">
+                    <div class="category-title">🚪 Agorafobia</div>
+                </div>
+                <div id="drop10" class="drop-zone" data-category="separation">
+                    <div class="category-title">👶 Ansiedad de Separación</div>
+                </div>
+                <div id="drop11" class="drop-zone" data-category="specific">
+                    <div class="category-title">🕷️ Fobia Específica</div>
+                </div>
+            </div>
+            <div id="feedback2" class="feedback"></div>
+            <div class="hint-system">
+                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining2">3</span>
+                | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining2">0</span>
+            </div>
+        </div>
+        <!-- Etapa 3 -->
+        <div id="stage3" class="stage hidden">
+            <h2>Etapa 3: Casos Clínicos Complejos</h2>
+            <p>Analiza casos complejos con comorbilidades y selecciona el diagnóstico principal más apropiado.</p>
+            <div class="player-info">
+                <div id="player1-s3" class="player">👤 Jugador 1</div>
+                <div id="player2-s3" class="player">👤 Jugador 2</div>
+            </div>
+            <div class="puzzle-area" id="pieces-container3"></div>
+            <div class="puzzle-area">
+                <div id="drop12" class="drop-zone" data-category="ptsd-complex">
+                    <div class="category-title">🌪️ TEPT Complejo</div>
+                </div>
+                <div id="drop13" class="drop-zone" data-category="gad-severe">
+                    <div class="category-title">😰 TAG Severo</div>
+                </div>
+                <div id="drop14" class="drop-zone" data-category="panic-agoraphobia">
+                    <div class="category-title">💨🚪 Pánico + Agorafobia</div>
+                </div>
+                <div id="drop15" class="drop-zone" data-category="social-severe">
+                    <div class="category-title">👥😱 Ansiedad Social Severa</div>
+                </div>
+                <div id="drop16" class="drop-zone" data-category="mixed-anxiety">
+                    <div class="category-title">🔀 Trastorno Mixto</div>
+                </div>
+                <div id="drop17" class="drop-zone" data-category="adjustment-ptsd">
+                    <div class="category-title">🔄🌪️ Adaptativo vs TEPT</div>
+                </div>
+            </div>
+            <div id="feedback3" class="feedback"></div>
+            <div class="hint-system">
+                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining3">3</span>
+                | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining3">0</span>
+            </div>
+        </div>
+        <!-- Etapa 4 -->
+        <div id="stage4" class="stage hidden">
+            <h2>Etapa 4: Estrategias de Intervención Avanzadas</h2>
+            <p>Selecciona la estrategia de intervención más adecuada considerando severidad, comorbilidades y contexto.</p>
+            <div class="player-info">
+                <div id="player1-s4" class="player">👤 Jugador 1</div>
+                <div id="player2-s4" class="player">👤 Jugador 2</div>
+            </div>
+            <div class="puzzle-area" id="pieces-container4"></div>
+            <div class="puzzle-area">
+                <div id="drop18" class="drop-zone" data-category="crisis">
+                    <div class="category-title">🚨 Intervención en Crisis</div>
+                </div>
+                <div id="drop19" class="drop-zone" data-category="psychotherapy">
+                    <div class="category-title">🗣️ Psicoterapia Especializada</div>
+                </div>
+                <div id="drop20" class="drop-zone" data-category="medication">
+                    <div class="category-title">💊 Farmacoterapia</div>
+                </div>
+                <div id="drop21" class="drop-zone" data-category="combined">
+                    <div class="category-title">🔗 Tratamiento Combinado</div>
+                </div>
+                <div id="drop22" class="drop-zone" data-category="prevention">
+                    <div class="category-title">🛡️ Prevención Terciaria</div>
+                </div>
+                <div id="drop23" class="drop-zone" data-category="referral">
+                    <div class="category-title">🏥 Derivación Urgente</div>
+                </div>
+            </div>
+            <div id="feedback4" class="feedback"></div>
+            <div class="hint-system">
+                💡 <strong>Pistas disponibles:</strong> <span id="hints-remaining4">3</span>
+                | ⏰ <strong>Piezas restantes:</strong> <span id="pieces-remaining4">0</span>
+            </div>
+        </div>
+        <!-- Botones -->
+        <button id="nextBtn" class="hidden" disabled>Siguiente Etapa 🚀</button>
+        <button id="hintBtn">💡 Pista</button>
+        <button id="restartBtn">🔄 Reiniciar Juego</button>
+        <button id="shuffleBtn">🎲 Mezclar Cartas</button>
+        <button id="installBtn">📱 Instalar App</button>
+        
+        <!-- Resumen Final -->
+        <div id="summary" class="stage hidden">
+            <h2>🏆 ¡Resumen Diagnóstico Completo!</h2>
+            <div id="final-score" class="score" style="font-size: 28px;"></div>
+            <h3>📚 Diferencias Clave Actualizadas (DSM-5-TR):</h3>
+            <div class="puzzle-area" style="justify-content: center;">
+                <div style="text-align: left; max-width: 900px; background: rgba(35,35,40,0.98); padding: 25px; border-radius: 15px;">
+                    <p><strong>🔹 Trastorno de Ansiedad Generalizada (TAG):</strong> Preocupación excesiva ≥6 meses + ≥3 síntomas (inquietud, fatiga, dificultad concentración, irritabilidad, ...</p>
+                    <p><strong>🔹 Trastorno de Pánico:</strong> Ataques de pánico inesperados recurrentes + preocupación persistente ≥1 mes o cambio comportamental significativo...</p>
+                    <p><strong>🔹 TEPT:</strong> Exposición a trauma + síntomas de reviviscencia, evitación, alteraciones cognitivas/anímicas negativas y arousal/reactividad ≥1 mes...</p>
+                    <p><strong>🔹 Trastorno Adaptativo:</strong> Síntomas emocionales/comportamentales en respuesta a estresor identificable dentro de 3 meses, sin cumplir criterios para otro trastorno...</p>
+                    <p><strong>🔹 Ansiedad Social:</strong> Miedo marcado ≥6 meses a situaciones sociales por evaluación negativa. DSM-5-TR especifica presentación en línea/digital.</p>
+                    <p><strong>🔹 Agorafobia:</strong> Miedo ≥6 meses a ≥2 situaciones (transporte, espacios abiertos/cerrados, multitudes, estar solo fuera)...</p>
+                    <p><strong>🔹 Estrés Agudo vs Patológico:</strong> Estrés patológico cuando supera capacidad adaptativa, persiste ≥6 meses, causa deterioro funcional significativo o comorbilidades...</p>
+                </div>
+            </div>
+            <h3>💊 Opciones Terapéuticas Basadas en Evidencia:</h3>
+            <ul style="text-align: left; max-width: 900px; margin: 0 auto; background: rgba(35,35,40,0.98); padding: 25px; border-radius: 15px;">
+                <li><strong>🗣️ Cognitivo-Conductual (TCC):</strong> Primera línea para TAG, pánico, fobias sociales y TEPT. EMDR para TEPT.</li>
+                <li><strong>💊 ISRS/SNRI:</strong> Primera línea farmacológica. Sertralina, paroxetina para TEPT. Escitalopram para TAG.</li>
+                <li><strong>🚨 Intervención en Crisis:</strong> Para estrés agudo con desorganización grave o riesgo inmediato.</li>
+                <li><strong>🛡️ Prevención:</strong> Psicoeducación temprana, manejo de estrés, resiliencia.</li>
+                <li><strong>🔗 Tratamiento Combinado:</strong> TCC + farmacoterapia para casos severos o crónicos.</li>
+                <li><strong>🏥 Derivación Especializada:</strong> Casos refractarios, comorbilidades complejas, riesgo suicida.</li>
+            </ul>
+            <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #15181d 90%, #43cea2 100%); border-radius: 15px;">
+                <h4>🎯 Tu Rendimiento:</h4>
+                <div id="performance-breakdown"></div>
+            </div>
+        </div>
+    </div>
+    <script src="puzzle-game.js"></script>
+    <script>
+    // Adaptación móvil: selección por toque/clic
+    document.addEventListener('DOMContentLoaded', function() {
+        let selectedPiece = null;
+        let selectedZone = null;
+        document.body.addEventListener('click', function(e) {
+            if (e.target.classList.contains('puzzle-piece') && e.target.getAttribute('draggable') !== 'false') {
+                document.querySelectorAll('.puzzle-piece.selected').forEach(el => el.classList.remove('selected'));
+                selectedPiece = e.target;
+                selectedPiece.classList.add('selected');
+                selectedZone = null;
+                document.querySelectorAll('.drop-zone.selected-target').forEach(el => el.classList.remove('selected-target'));
+            }
+            else if (e.target.closest('.drop-zone') && selectedPiece) {
+                const zone = e.target.closest('.drop-zone');
+                document.querySelectorAll('.drop-zone.selected-target').forEach(el => el.classList.remove('selected-target'));
+                zone.classList.add('selected-target');
+                selectedZone = zone;
+                const stageMatch = zone.closest('.stage');
+                let stageNum = 1;
+                if (stageMatch) {
+                    const id = stageMatch.id;
+                    if (/stage(\d)/.test(id)) stageNum = parseInt(id.replace('stage',''));
+                }
+                if (typeof window.dropPuzzlePiece === 'function') {
+                    window.dropPuzzlePiece(selectedPiece, selectedZone, stageNum);
+                } else {
+                    selectedZone.appendChild(selectedPiece);
+                    selectedPiece.classList.remove('selected');
+                    selectedPiece.setAttribute('draggable','false');
+                }
+                selectedPiece = null;
+                setTimeout(()=>zone.classList.remove('selected-target'),500);
+            }
+        });
+    });
+    </script>
+</body>
+</html>
